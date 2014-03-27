@@ -113,3 +113,12 @@
       handler: 'TYPO3\Neos\Routing\BackendModuleArgumentsRoutePartHandler'
   toLowerCase: false
   appendExceedingArguments: TRUE
+
+-
+  name: 'User Interface'
+  uriPattern: 'userinterface'
+  defaults:
+    '@package':    'TYPO3.Neos'
+    '@controller': 'Backend\UserInterface'
+    '@action': 'getI18n'
+  appendExceedingArguments: TRUE

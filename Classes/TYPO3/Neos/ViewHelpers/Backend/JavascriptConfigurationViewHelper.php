@@ -15,6 +15,7 @@ use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Reflection\ObjectAccess;
 use TYPO3\Flow\Utility\PositionalArraySorter;
 use TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\Flow\Utility\Files;
 
 /**
  * ViewHelper for the backend JavaScript configuration. Renders the required JS snippet to configure
@@ -58,11 +59,19 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 	protected $securityContext;
 
 	/**
+	 * @Flow\Inject(setting="userInterface.defaultLocale")
+	 * @var string
+	 */
+	protected $defaultLocale;
+
+	/**
 	 * @return string
 	 */
 	public function render() {
 		$configuration = array(
 			'window.T3Configuration = {};',
+			'window.T3Configuration.locale = "' . $this->defaultLocale . '";',
+			'window.T3Configuration.localeIncludes = ' . json_encode($this->getLocaleIncludes()) . ';',
 			'window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']) . ';',
 			'window.T3Configuration.nodeTypes = {};',
 			'window.T3Configuration.nodeTypes.groups = ' . json_encode($this->getNodeTypeGroupsSettings()) . ';',
@@ -79,6 +88,23 @@ class JavascriptConfigurationViewHelper extends AbstractViewHelper {
 		}
 
 		return (implode("\n", $configuration));
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function getLocaleIncludes() {
+		$localeIncludesArray = array();
+
+		$uriBuilder = $this->controllerContext->getUriBuilder();
+		$uriBuilder->setCreateAbsoluteUri(TRUE);
+
+		$uri = $uriBuilder->uriFor('getI18n', array(), 'Backend\\UserInterface', 'TYPO3.Neos');
+		
+		// TODO: make sensitive to changes from the user to load the selected locale. Now only the default locale is loaded
+		$localeIncludesArray[] = $uri;
+
+		return $localeIncludesArray;
 	}
 
 	/**

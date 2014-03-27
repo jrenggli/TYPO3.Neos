@@ -134,11 +134,13 @@ module.exports = function(grunt) {
 		// This file needs jQueryWithDependencies first
 		ember: {
 			src: [
-				baseUri + 'emberjs/ember-1.0.0.js'
+				baseUri + 'emberjs/ember-1.0.0.js',
+				baseUri + 'ember-i18n/lib/i18n.js'
 			],
 			dest: baseUri + 'ember.js',
 			options: {
-				banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars"], function(jQuery, Handlebars) {' +
+				banner: 'define(["Library/jquery-with-dependencies", "Library/handlebars", "Library/cldr"], function(jQuery, Handlebars, CLDR) {' +
+						'  CLDR.defaultLocale = window.T3Configuration.locale;' + // TODO: make configurable, as this is only used for plurals this is not highest prio (same behavior in cldr for most languages)
 						'  var Ember = {exports: {}};' +
 						'  var ENV = {LOG_VERSION: false};' +
 						'  Ember.imports = {jQuery: jQuery, Handlebars: Handlebars};' +
@@ -146,7 +148,14 @@ module.exports = function(grunt) {
 						'  Ember.lookup = { Ember: Ember, T3: window.T3};' +
 						'  window.Ember = Ember;',
 				footer: '  return Ember;' +
-						'});'
+						'});',
+				process: function(src) {
+					src = src.replace('I18n.t(', 'I18n.translate(');
+					src = src.replace("Handlebars.registerHelper('t'", "Handlebars.registerHelper('translate'");
+					src = src.replace('t: function(key, context)', 'translate: function(key, context)');
+
+					return src;
+				}
 			}
 		},
 
@@ -323,7 +332,6 @@ module.exports = function(grunt) {
 				baseUri + 'jquery/jquery-migrate-1.2.1.js',
 				baseUri + 'jquery-easing/jquery.easing.1.3.js',
 				baseUri + 'jquery-ui/js/jquery-ui-1.10.3.custom.js',
-				baseUri + 'jquery-cookie/jquery.cookie.js',
 				baseUri + 'jquery-dynatree/js/jquery.dynatree.js',
 				baseUri + 'chosen/chosen/chosen.jquery.js',
 				baseUri + 'jcrop/js/jquery.Jcrop.js',
@@ -340,6 +348,21 @@ module.exports = function(grunt) {
 					// Replace call to define() in jquery which conflicts with the dependency resolution in r.js
 					return src.replace('define( "jquery", [], function () { return jQuery; } );', 'jQuery.migrateMute = true;');
 				}
+			}
+		},
+
+		cldr: {
+			src: [
+				baseUri + 'ember-i18n/vendor/cldr-1.0.0.js'
+			],
+			dest: baseUri + 'cldr.js',
+			options: {
+				banner: 'define(function() {' +
+				'  var root = {};' +
+				'  (function() {',
+				footer: '  }).apply(root);' +
+				'  return root.CLDR;' +
+				'});'
 			}
 		}
 	};

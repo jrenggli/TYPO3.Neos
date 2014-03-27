@@ -37,3 +37,13 @@ TYPO3\Neos\Domain\Service\ConfigurationContentDimensionPresetSource:
 
 TYPO3\Neos\Routing\FrontendNodeRoutePartHandlerInterface:
   className: TYPO3\Neos\Routing\FrontendNodeRoutePartHandler
+
+TYPO3\Neos\Service\XliffService:
+  properties:
+    xliffToJsonTranslationsCache:
+      object:
+        factoryObjectName: TYPO3\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: TYPO3_Neos_XliffToJsonTranslations

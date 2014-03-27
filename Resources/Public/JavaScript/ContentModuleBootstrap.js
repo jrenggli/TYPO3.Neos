@@ -5,7 +5,6 @@ window.T3 = {
 requirePaths = window.T3Configuration.requirejs.paths || {};
 requirePaths['Library'] = '../Library';
 requirePaths['text'] = '../Library/requirejs/text';
-requirePaths['i18n'] = '../Library/requirejs/i18n';
 
 /**
  * WARNING: if changing any of the require() statements below, make sure to also
@@ -16,8 +15,7 @@ require(
 		baseUrl: window.T3Configuration.neosJavascriptBasePath,
 		urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
 		paths: requirePaths,
-		context: 'neos',
-		locale: 'en'
+		context: 'neos'
 	},
 	[
 		'emberjs',
@@ -27,6 +25,7 @@ require(
 		'Shared/ResourceCache',
 		'Shared/Notification',
 		'Shared/Configuration',
+		'Shared/I18n',
 		'Shared/NodeTypeService',
 		'Shared/HttpClient',
 		'InlineEditing/PositioningHelper',
@@ -39,24 +38,33 @@ require(
 		PublishMenu,
 		ResourceCache,
 		Notification,
-		Configuration
+		Configuration,
+		I18n
 	) {
 		var T3 = window.T3;
 
 		ResourceCache.fetch(Configuration.get('VieSchemaUri'));
 
-		Ember.$(document).ready(function() {
-			ContentModule.bootstrap();
+		// Load all localizations, and then bootstrap the Neos interface
+		I18n.then(function() {
+			require(
+				{context: 'neos'},
+				function() {
+					Ember.$(document).ready(function() {
+						ContentModule.bootstrap();
+						ContentModule.advanceReadiness();
 
-			ContentModule.advanceReadiness();
-
-			// Wait until the NodeTypeService is usable by resolving the promise
-			ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
-				ApplicationView.create().appendTo('#neos-application');
-				if (window.T3.isContentModule) {
-					PublishMenu.create().appendTo('#neos-top-bar-right');
+						// Wait until the NodeTypeService is usable by resolving the promise
+						ResourceCache.getItem(Configuration.get('NodeTypeSchemaUri')).then(function() {
+							ApplicationView.create().appendTo('#neos-application');
+							if (window.T3.isContentModule) {
+								PublishMenu.create().appendTo('#neos-top-bar-right');
+							}
+						});
+					});
 				}
-			});
+			);
 		});
+
 	}
 );

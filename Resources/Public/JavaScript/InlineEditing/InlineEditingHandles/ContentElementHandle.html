@@ -1,7 +1,8 @@
 <div class="neos-button-toolbar">
 	<div class="neos-button-group">
+<<<<<<< HEAD
 		{{#if view._showCreate}}
-			<button class="neos-button action-new" title="Create after" {{action "newAfter" target="view"}} tabindex="-1">
+			<button class="neos-button action-new" title="{{translate id='button.createAfter' default='Create after'}}" {{action "newAfter" target="view"}} tabindex="-1">
 				{{#if view._thisElementIsAddingNewContent}}
 					<i class="neos-handle-loading"></i>
 				{{else}}
@@ -15,12 +16,12 @@
 			</button>
 		{{/if}}
 		{{#if view._showCut}}
-			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="Cut" {{action "cut" target="view"}} tabindex="-1">
+			<button class="neos-button action-cut" {{bindAttr class="view._thisElementStartedCut:neos-active"}} title="{{translate id='button.cut' default='Cut'}}" {{action "cut" target="view"}} tabindex="-1">
 				<i class="icon-cut"></i>
 			</button>
 		{{/if}}
 		{{#if view._showCopy}}
-			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="Copy" {{action "copy" target="view"}} tabindex="-1">
+			<button class="neos-button action-copy" {{bindAttr class="view._thisElementStartedCopy:neos-active"}} title="{{translate id='button.copy' default='Copy'}}" {{action "copy" target="view"}} tabindex="-1">
 				<i class="icon-copy"></i>
 			</button>
 		{{/if}}
@@ -34,7 +35,7 @@
 			</button>
 		{{/if}}
 		{{#if view._showRemove}}
-			<button class="neos-button action-remove" title="Remove" {{action "remove" target="view"}} tabindex="-1">
+			<button class="neos-button action-remove" title="{{translate id='button.remove' default='Remove'}}" {{action "remove" target="view"}} tabindex="-1">
 				<i class="icon-trash"></i>
 			</button>
 		{{/if}}
